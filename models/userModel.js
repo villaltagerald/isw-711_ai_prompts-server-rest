@@ -11,7 +11,9 @@ const user = new Schema({
   last_name: { type: String },
   password: { type: String },
   email: { type: String },
-  varified: { type: Boolean },
+  phone: { type: Number },
+  varified: { type: Boolean , default: false},
+  two_fa: { type: Boolean , default: false},
   permission: { type: [permission], default: [{ idPermission: "prompts", permission: ['create', 'edit', 'read', 'delete'] }] }
 });
 

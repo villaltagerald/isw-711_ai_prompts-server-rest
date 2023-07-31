@@ -18,6 +18,7 @@ const {
   userPost,
   userGet,
   userDelete,
+  userGetProfile,
   userConsult
 } = require("./controllers/userController.js");
 
@@ -213,7 +214,6 @@ const getRequiredPermissions = (path, method) => {
     '/api/users': {
       GET: { permission: ['read'], idPermission: 'users' },
       PUT: { permission: ['edit'], idPermission: 'users' },
-      PATCH: { permission: ['edit'], idPermission: 'users' },
       DELETE: { permission: ['delete'], idPermission: 'users' }
     },
     // Otras rutas y permisos
@@ -262,7 +262,6 @@ const hasSufficientPermissions = (userPermissions, requiredPermissions) => {
 
 // JWT Authentication middleware
 app.use(function (req, res, next) {
-  console.log(req.method,req.path)
   if (req.headers["authorization"]) {
     const authToken = req.headers['authorization'].split(' ')[1];
     try {
@@ -273,12 +272,12 @@ app.use(function (req, res, next) {
             error: "Unauthorized 1"
           });
         }
-        console.log('Welcome', decodedToken.name);
         // Verificar los permisos requeridos para la función
         const requiredPermissions = getRequiredPermissions(req.path, req.method); // Función para obtener los permisos requeridos para la ruta y el método actual
         const userPermissions = decodedToken.permission;
 
         if (hasSufficientPermissions(userPermissions, requiredPermissions)) {
+          console.log('Welcome', decodedToken.name);
           // El usuario tiene los permisos necesarios
           req.user = decodedToken;// Almacena el token decodificado en req.user
           next();
@@ -314,7 +313,8 @@ app.post("/api/users", userPost);
 app.patch("/api/users", userPatch);
 app.put("/api/users", userPatch);
 app.delete("/api/users", userDelete);
-
+//Edicion de Usuario
+app.get("/api/usersprofile", userGetProfile);
 //prompts
 app.get("/api/prompts", promptsGet);
 app.post("/api/prompts", promptsPost);
