@@ -93,9 +93,9 @@ const userPatch = (req, res) => {
       user.first_name = req.body.first_name ? req.body.first_name : user.first_name;
       user.last_name = req.body.last_name ? req.body.last_name : user.last_name;
       user.password = req.body.password ? req.body.password : user.password;
-      user.phone = req.body.phone ? req.body.phone : user.phone;
+      user.phone = req.body.phone;
       user.email = req.body.email ? req.body.email : user.email;
-      user.two_fa = req.body.two_fa ? req.body.two_fa : user.two_fa;
+      user.two_fa = req.body.two_fa === user.two_fa ? user.two_fa : req.body.two_fa;
       user.varified = req.body.varified === user.varified ? user.varified : req.body.varified;
       //user.permission = req.body.permission?req.body.permission:user.permission;
 
