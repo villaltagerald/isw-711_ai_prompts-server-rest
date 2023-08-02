@@ -34,6 +34,10 @@ const {
   createEdit,
   createCompletition } = require("./controllers/openAiController.js");
 
+  const {
+    sendMail,
+    verifiedUser } = require("./controllers/verificationAuto.js");
+
 // parser for the request body (required for the POST and PUT methods)
 const bodyParser = require("body-parser");
 // Middlewares
@@ -156,7 +160,7 @@ app.post("/api/session", async function (req, res) {
   if (req.body.username && req.body.password) {
     try {
       const user = await userConsult(req.body.username);
-      if (req.body.username === user.email && req.body.password === user.password) {
+      if (user && req.body.username === user.email && req.body.password === user.password) {
         if (user.varified) {
           //TODO: query the database to get the user info
           const data = {
@@ -259,7 +263,7 @@ const hasSufficientPermissions = (userPermissions, requiredPermissions) => {
   // El usuario tiene todos los permisos requeridos
   return true;
 };
-
+const pathPublic=["/api/users","/api/sendmail","/api/verifieduser/"];
 // JWT Authentication middleware
 app.use(function (req, res, next) {
   if (req.headers["authorization"]) {
@@ -295,7 +299,7 @@ app.use(function (req, res, next) {
         error: "Unauthorized 3"
       });
     }
-  } else if (req.method === 'POST' && req.path === "/api/users") {
+  } else if (req.method === 'POST' && pathPublic.includes(req.path)) {
     next();
   } else {
     res.status(401);
@@ -320,7 +324,9 @@ app.get("/api/prompts", promptsGet);
 app.post("/api/prompts", promptsPost);
 app.patch("/api/prompts", promptsPatch);
 app.delete("/api/prompts", promptsDelete);
-
+//verificationAuto
+app.post("/api/sendmail", sendMail);
+app.post("/api/verifieduser", verifiedUser);
 // openAi
 app.post("/api/openAiImage", createImage);
 app.post("/api/openAiEdit", createEdit);

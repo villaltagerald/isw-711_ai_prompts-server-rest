@@ -13,7 +13,7 @@ const userPost = async (req, res) => {
   user.password = req.body.password;
   user.email = req.body.email;
   user.phone = req.body.phone;
-  user.varified = req.body.varified;
+  user.varified = req.body.varified ? req.body.varified : false;
   //user.permission=req.body.permission;
 
   if (user.first_name && user.last_name) {
@@ -159,16 +159,16 @@ const userDelete = (req, res) => {
  */
 const userGetProfile = (req, res) => {
   // if an specific user is required
-    User.findById(req.user.userId)
-      .then((user) => {
-        user.password = "";
-        res.json(user);
-      })
-      .catch(err => {
-        res.status(404);
-        console.log('error while queryting the user', err)
-        res.json({ error: "User doesnt exist" })
-      });
+  User.findById(req.user.userId)
+    .then((user) => {
+      user.password = "";
+      res.json(user);
+    })
+    .catch(err => {
+      res.status(404);
+      console.log('error while queryting the user', err)
+      res.json({ error: "User doesnt exist" })
+    });
 };
 
 const userConsult = (email) => {
@@ -188,6 +188,30 @@ const userConsult = (email) => {
     });
 };
 
+const userVerified = (id) => {
+  return new Promise((resolve, reject) => {
+    User.findById(id, function (err, user) {
+      if (err) {
+        console.log('error while querying the user', err);
+        reject(err); // Rechazar la promesa en caso de error
+      } else {
+        // Verificar al usuario
+        user.varified = true;
+
+        user.save(function (err) {
+          if (err) {
+            console.log('error while saving the user', err);
+            reject(err); // Rechazar la promesa en caso de error
+          } else {
+            resolve(true); // Resolver la promesa con valor true cuando se ha verificado el usuario con éxito
+          }
+        });
+      }
+    });
+  });
+};
+
+
 
 module.exports = {
   userGet,
@@ -195,5 +219,6 @@ module.exports = {
   userPatch,
   userDelete,
   userGetProfile,
-  userConsult
+  userConsult,
+  userVerified
 }
