@@ -1,10 +1,5 @@
 const mongoose = require('mongoose');
 
-const subTagSchema = new mongoose.Schema({
-  subTags: [{ type: String }],
-  tagId: { type: String }
-}, { _id: false });
-
 const questionSchema = new mongoose.Schema({
   responseCount: { type: Number },
   input: { type: String },
@@ -18,7 +13,7 @@ const questionSchema = new mongoose.Schema({
 const promptSchema = new mongoose.Schema({
   name: { type: String },
   type: { type: String, enum: ['Edit', 'Images', 'Completitions'] },
-  tags: [subTagSchema],
+  tags: [{type: String}],
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
