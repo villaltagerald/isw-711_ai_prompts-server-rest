@@ -34,9 +34,13 @@ const {
   createEdit,
   createCompletition } = require("./controllers/openAiController.js");
 
-  const {
-    sendMail,
-    verifiedUser } = require("./controllers/verificationAuto.js");
+const {
+  sendMail,
+  verifiedUser } = require("./controllers/verificationAuto.js");
+
+const {
+  resetMail,
+  resetPassword } = require("./controllers/resetPassController.js");
 
 // parser for the request body (required for the POST and PUT methods)
 const bodyParser = require("body-parser");
@@ -263,7 +267,7 @@ const hasSufficientPermissions = (userPermissions, requiredPermissions) => {
   // El usuario tiene todos los permisos requeridos
   return true;
 };
-const pathPublic=["/api/users","/api/sendmail","/api/verifieduser/"];
+const pathPublic = ["/api/users", "/api/sendmail", "/api/verifieduser/","/api/resetmail","/api/resetpasswaord/"];
 // JWT Authentication middleware
 app.use(function (req, res, next) {
   if (req.headers["authorization"]) {
@@ -327,6 +331,9 @@ app.delete("/api/prompts", promptsDelete);
 //verificationAuto
 app.post("/api/sendmail", sendMail);
 app.post("/api/verifieduser", verifiedUser);
+//reser password,
+app.post("/api/resetmail", resetMail);
+app.post("/api/resetpasswaord", resetPassword);
 // openAi
 app.post("/api/openAiImage", createImage);
 app.post("/api/openAiEdit", createEdit);

@@ -219,6 +219,39 @@ const userVerified = (id) => {
   });
 };
 
+const newPassword = (email, password) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({ email }, function (err, user) {
+        if (user) {
+          // Verificar si la contraseña es diferente a la actual
+          if (user.password === password) {
+            console.log('password is the same as the current one');
+            reject(new Error('Password is the same as the current one')); // Rechazar la promesa si la contraseña es la misma
+          } else {
+            user.password = password;
+
+            user.save(function (err) {
+              if (err) {
+                console.log('error while saving the user', err);
+                reject(new Error('A problem occurred, please try again')); // Rechazar la promesa en caso de error al guardar
+              } else {
+                resolve(true); // Resolver la promesa con éxito
+              }
+            });
+          }
+        } else {
+          console.log('user not found');
+          reject(new Error('Mail is not registered')); // Rechazar la promesa si el usuario no se encuentra
+        }
+      })
+      .catch((error) => {
+        console.log('error while searching for user', error);
+        reject(new Error('A problem occurred, please try again')); // Rechazar la promesa en caso de error en la búsqueda
+      });
+  });
+};
+
+
 
 
 module.exports = {
@@ -228,5 +261,6 @@ module.exports = {
   userDelete,
   userGetProfile,
   userConsult,
-  userVerified
+  userVerified,
+  newPassword
 }
