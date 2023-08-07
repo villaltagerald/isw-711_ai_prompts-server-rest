@@ -7,36 +7,44 @@ const User = require("../models/userModel");
  * @param {*} res
  */
 const userPost = async (req, res) => {
-  let user = new User();
-  user.first_name = req.body.first_name;
-  user.last_name = req.body.last_name;
-  user.password = req.body.password;
-  user.email = req.body.email;
-  user.phone = req.body.phone;
-  user.varified = req.body.varified ? req.body.varified : false;
-  //user.permission=req.body.permission;
+  if (await userConsult(req.body.email) === null) {
+    let user = new User();
+    user.first_name = req.body.first_name;
+    user.last_name = req.body.last_name;
+    user.password = req.body.password;
+    user.email = req.body.email;
+    user.phone = req.body.phone;
+    user.varified = req.body.varified ? req.body.varified : false;
+    //user.permission=req.body.permission;
 
-  if (user.first_name && user.last_name) {
-    await user.save()
-      .then(data => {
-        res.status(201); // CREATED
-        res.header({
-          'location': `/api/user/?id=${data.id}`
+    if (user.first_name && user.last_name) {
+      await user.save()
+        .then(data => {
+          res.status(201); // CREATED
+          res.header({
+            'location': `/api/user/?id=${data.id}`
+          });
+          res.json(data);
+        })
+        .catch(err => {
+          res.status(422);
+          console.log('error while saving the user', err);
+          res.json({
+            error: 'There was an error saving the user'
+          });
         });
-        res.json(data);
-      })
-      .catch(err => {
-        res.status(422);
-        console.log('error while saving the user', err);
-        res.json({
-          error: 'There was an error saving the user'
-        });
+    } else {
+      res.status(422);
+      console.log('error while saving the user')
+      res.json({
+        error: 'No valid data provided for user'
       });
+    }
   } else {
     res.status(422);
     console.log('error while saving the user')
     res.json({
-      error: 'No valid data provided for user'
+      error: 'No valid data has been provided for the user, the email is already registered.'
     });
   }
 };
