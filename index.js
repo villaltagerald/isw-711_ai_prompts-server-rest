@@ -267,7 +267,9 @@ const hasSufficientPermissions = (userPermissions, requiredPermissions) => {
   // El usuario tiene todos los permisos requeridos
   return true;
 };
+
 const pathPublic = ["/api/users", "/api/sendmail", "/api/verifieduser/","/api/resetmail","/api/resetpasswaord/"];
+
 // JWT Authentication middleware
 app.use(function (req, res, next) {
   if (req.headers["authorization"]) {
