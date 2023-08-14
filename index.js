@@ -42,6 +42,10 @@ const {
   resetMail,
   resetPassword } = require("./controllers/resetPassController.js");
 
+const {
+  sendCodeVerify,verifyCode
+} = require("./controllers/autenticarFAController.js");
+
 // parser for the request body (required for the POST and PUT methods)
 const bodyParser = require("body-parser");
 // Middlewares
@@ -166,21 +170,37 @@ app.post("/api/session", async function (req, res) {
       const user = await userConsult(req.body.username);
       if (user && req.body.username === user.email && req.body.password === user.password) {
         if (user.varified) {
-          //TODO: query the database to get the user info
-          const data = {
-            name: user.first_name + " " + user.last_name,
-            permission: user.permission,
-            token: jwt.sign({
-              userId: user._id,
-              username: user.email,
+          if (!user.two_fa) { //TODO: query the database to get the user info
+            const data = {
               name: user.first_name + " " + user.last_name,
-              permission: user.permission
-            }, theSecretKey)
-          };
+              permission: user.permission,
+              token: jwt.sign({
+                userId: user._id,
+                username: user.email,
+                name: user.first_name + " " + user.last_name,
+                permission: user.permission
+              }, theSecretKey)
+            };
 
-          res.status(201).json({
-            data
-          })
+            res.status(201).json({
+              data
+            })
+          }
+          else{
+            const responseSend=sendCodeVerify(user.email);
+            if(responseSend){
+              res.status(201).json({
+                two_fa:true,
+                id:user._id
+              })
+            }
+            else{
+              res.status(422);
+              res.json({
+              error: 'Error verify two Factor'
+          });
+            }
+          }
         } else {//
           res.status(422);
           res.json({
@@ -268,10 +288,11 @@ const hasSufficientPermissions = (userPermissions, requiredPermissions) => {
   return true;
 };
 
-const pathPublic = ["/api/users", "/api/sendmail", "/api/verifieduser/","/api/resetmail","/api/resetpasswaord/"];
+const pathPublic = ["/api/users", "/api/sendmail", "/api/verifieduser/", "/api/resetmail", "/api/resetpasswaord/","/api/verifycode"];
 
 // JWT Authentication middleware
 app.use(function (req, res, next) {
+  console.log(req.path);
   if (req.headers["authorization"]) {
     const authToken = req.headers['authorization'].split(' ')[1];
     try {
@@ -340,5 +361,7 @@ app.post("/api/resetpasswaord", resetPassword);
 app.post("/api/openAiImage", createImage);
 app.post("/api/openAiEdit", createEdit);
 app.post("/api/openAiCompletition", createCompletition);
+//autenticar2FA
+app.post("/api/verifycode", verifyCode)
 
 app.listen(3000, () => console.log(`Example app listening on port 3000!`))

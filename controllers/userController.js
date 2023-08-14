@@ -196,6 +196,23 @@ const userConsult = (email) => {
     });
 };
 
+const userConsultId = (_id) => {
+  return User.findById({_id })
+    .then((user) => {
+      if (user) {
+        // Usuario encontrado, devolver la información en formato JSON
+        return user;
+      } else {
+        // Usuario no encontrado, no devolver nada
+        return null;
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      return null;
+    });
+};
+
 const userVerified = (id) => {
   return new Promise((resolve, reject) => {
     User.findById(id, function (err, user) {
@@ -262,5 +279,6 @@ module.exports = {
   userGetProfile,
   userConsult,
   userVerified,
-  newPassword
+  newPassword,
+ userConsultId
 }
