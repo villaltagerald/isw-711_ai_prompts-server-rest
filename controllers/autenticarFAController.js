@@ -50,7 +50,7 @@ const verifyCode = (req, res) => {
         
         if (code.userid === req.body.id && fechaHoraExpiration.getTime() >= fechaActual.getTime()) {
           const user=await userConsultId(req.body.id);
-          console.log(user);
+          //console.log(user);
           const data = {
             name: user.first_name + " " + user.last_name,
             permission: user.permission,
