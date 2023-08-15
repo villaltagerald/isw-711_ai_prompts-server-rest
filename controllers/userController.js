@@ -15,6 +15,7 @@ const userPost = async (req, res) => {
     user.email = req.body.email;
     user.phone = req.body.phone;
     user.varified = req.body.varified ? req.body.varified : false;
+    user.two_fa = req.body.two_fa ? req.body.two_fa : false;
     //user.permission=req.body.permission;
 
     if (user.first_name && user.last_name) {

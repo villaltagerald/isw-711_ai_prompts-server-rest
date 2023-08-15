@@ -1,6 +1,7 @@
 require('dotenv').config();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioNumber = process.env.TWILIO_NUMBER;
 const client = require("twilio")(accountSid, authToken);
 const { userConsult,userConsultId } = require("./userController");
 const Code = require("../models/codeModel")
@@ -29,7 +30,7 @@ const sendCodeVerify = async (email) => {
     client.messages
       .create({
         body: `Tu codigo Verificacion:${code}`,
-        from: '+18159892531',
+        from: twilioNumber,
         to: `+506${user.phone}`,
       })
       .then(response = true).catch(response = false);

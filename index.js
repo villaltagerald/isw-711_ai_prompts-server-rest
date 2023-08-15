@@ -57,111 +57,6 @@ app.use(cors({
   domains: '*',
   methods: "*"
 }));
-/*
-// login token based
-app.post("/api/session", async function (req, res, next) {
-  if (req.body.username && req.body.password) {
-    try {
-      const user = await userConsult(req.body.username);
-      if (req.body.username === user.email && req.body.password === user.password) {
-        if (user.varified) {
-          const session = saveSession(req.body.username);
-          session.then(function (session) {
-            console.log('session', session);
-            if (!session) {
-              res.status(422);
-              res.json({
-                error: 'There was an error saving the session'
-              });
-            }
-            res.status(201).json({
-              session
-            });
-          })
-        } else {//
-          res.status(422);
-          res.json({
-            error: 'At the verification request'
-          });
-        }
-      } else {//
-        res.status(422);
-        res.json({
-          error: 'Invalid username or password'
-        });
-      }
-    } catch (error) {//
-      res.status(422);
-      res.json({
-        error: 'Invalid username or password'
-      });
-      console.error(error); // Manejar cualquier error que ocurra durante la consulta
-    }
-  } else {
-    res.status(422);
-    res.json({
-      error: 'Invalid username or password'
-    });
-  }
-
-});
-
-// Token based Auth
-app.use(function (req, res, next) {
-  if (req.headers["authorization"]) {
-    const token = req.headers['authorization'].split(' ')[1];
-    try {
-      //validate if token exists in the database
-      const session = getSession(token);
-      session.then(function (session) {
-        if (session) {
-          // Obtener la fecha y hora actual
-          const fechaActual = new Date();
-          // Obtener la fecha de expiración
-          const fechaExpiracion = new Date(session.expire);
-          // Verificar si la fecha de expiración es mayor a la fecha actual
-          if (fechaExpiracion.getTime() > fechaActual.getTime()) {
-            next();
-            return;
-          } else {
-            res.status(401);
-            res.send({
-              valid: false,
-              error: "Unauthorized Expire",
-            });
-          }
-
-        } else {
-          res.status(401);
-          res.send({
-            valid: false,
-            error: "Unauthorized",
-          });
-        }
-      })
-        .catch(function (err) {
-          console.log('there was an error getting the session', err);
-          res.status(422);
-          res.send({
-            error: "There was an error: " + e.message
-          });
-        });
-
-    } catch (e) {
-      res.status(422);
-      res.send({
-        error: "There was an error: " + e.message
-      });
-    }
-  } else {
-    res.status(401);
-    res.send({
-      valid: false,
-      error: "Unauthorized",
-    });
-  }
-});
-*/
 
 // login with JWT
 app.post("/api/session", async function (req, res) {
@@ -292,7 +187,6 @@ const pathPublic = ["/api/users", "/api/sendmail", "/api/verifieduser/", "/api/r
 
 // JWT Authentication middleware
 app.use(function (req, res, next) {
-  console.log(req.path);
   if (req.headers["authorization"]) {
     const authToken = req.headers['authorization'].split(' ')[1];
     try {
